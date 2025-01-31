@@ -1,0 +1,13 @@
+@mixin transition-ease {
+    transition: all 0.5s ease-in-out;
+}
+ 
+@mixin box-shadow($offset-x, $offset-y, $blur-radius, $spread-radius, $color) {
+   box-shadow: $offset-x $offset-y $blur-radius $spread-radius $color;
+}
+
+%center-object {
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+}

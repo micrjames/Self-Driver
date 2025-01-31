@@ -1,0 +1,16 @@
+@import 'utils/config';
+
+body {
+   .container {
+      margin: 0;
+      background: darkgray;
+      overflow: hidden;
+      text-align: center;
+
+	  width: 100vw;
+	  height: 100vh;
+   }
+   #myCanvas {
+     background: lightgray;
+   }
+}
