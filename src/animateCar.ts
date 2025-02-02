@@ -1,8 +1,16 @@
 import { Car } from "./Car";
+import { Road } from "./Road";
 
-export function animate(car: Car, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+export function animate(car: Car, road: Road, canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
    car.update();
    canvas.height = window.innerHeight; // unless, rectangle will not be discrete
+
+   ctx.save();
+   ctx.translate(0, -car._y+canvas.height*0.5);
+
+   road.draw(ctx);
    car.draw(ctx);
-   requestAnimationFrame(() => animate(car, canvas, ctx));
+
+   ctx.restore();
+   requestAnimationFrame(() => animate(car, road, canvas, ctx));
 }

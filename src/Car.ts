@@ -29,6 +29,10 @@ export class Car {
 	  this.controls = new Controls();
    }
 
+   get _y(): number {
+	  return this.y;
+   }
+
    update() {
 	   if(this.controls.forward){
 		 // this.y -= 2;
