@@ -1,4 +1,5 @@
 import { Controls } from "./Controls";
+import { Sensor } from "./Sensor";
 
 export class Car {
    private x: number;
@@ -12,6 +13,7 @@ export class Car {
    private friction: number;
    private angle: number;
 
+   private sensor: Sensor;
    private controls: Controls;
 
    constructor(x: number, y: number, width: number, height: number) {
@@ -26,9 +28,13 @@ export class Car {
 	  this.friction = 0.05;
 	  this.angle = 0;
 
+	  this.sensor = new Sensor(this);
 	  this.controls = new Controls();
    }
 
+   get _x(): number {
+	  return this.x;
+   }
    get _y(): number {
 	  return this.y;
    }
@@ -73,6 +79,8 @@ export class Car {
 	   this.x -= Math.sin(this.angle) * this.speed;
 	   this.y -= Math.cos(this.angle) * this.speed;
 	   // this.y -= this.speed;
+
+	   this.sensor.update();
    }
 
    draw(ctx: CanvasRenderingContext2D | null) {
@@ -88,6 +96,8 @@ export class Car {
 				 );
 		 ctx.fill();
 		 ctx.restore();
+
+		 this.sensor.draw(ctx);
 	  }
    }
 }
