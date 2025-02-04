@@ -1,6 +1,7 @@
 import { Controls } from "./Controls";
 import { Sensor } from "./Sensor";
 import { Borders } from "./utils";
+import { drawWithTransform } from "./canvasHelpers";
 
 export class Car {
    private x: number;
@@ -111,18 +112,15 @@ export class Car {
 
    draw(ctx: CanvasRenderingContext2D | null) {
 	  if(ctx) {
-		 ctx.save();
-		 ctx.translate(this.x, this.y);
-		 ctx.rotate(-this.angle);
-		 ctx.beginPath();
-		 ctx.rect(-this.width/2, // this.x-this.width/2,
-				  -this.height/2, // this.y-this.height/2,
-				  this.width,
-				  this.height
-				 );
-		 ctx.fill();
-		 ctx.restore();
-
+		 drawWithTransform(ctx, this.x, this.y, -this.angle, ctx => {
+			ctx.beginPath();
+			ctx.rect(-this.width/2, // this.x-this.width/2,
+					 -this.height/2, // this.y-this.height/2,
+					 this.width,
+					 this.height
+					);
+			ctx.fill();
+		 });
 		 this.sensor.draw(ctx);
 	  }
    }
