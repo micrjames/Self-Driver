@@ -41,25 +41,62 @@ export class Car {
    }
 
    update(borders: Borders) { 
-	  this.move();
+	  this.accelerate();
+	  this.steer();
+	  this.updatePostion();
+	  this.clampSpeed();
+	  this.applyFriction();
+
+	  this.sensor.update();
 	  console.log(borders);
    }
 
-   private move() {
-	   if(this.controls.forward){
-		 // this.y -= 2;
-		 this.speed += this.acceleration;
+   private accelerate() {
+	  if(this.controls.forward){
+		// this.y -= 2;
+		this.speed += this.acceleration;
+      }
+	  if(this.controls.reverse) {
+		// this.y += 2;
+		this.speed -= this.acceleration;
+	  }
+   }
+   private steer() {
+	  if(this.speed != 0) {
+		  const flip = this.speed > 0 ? 1 : -1;
+		  if(this.controls.left) {
+			  // this.x -= 2;
+			  this.angle += 0.03 * flip;
+		  }
+		  if(this.controls.right) {
+			  // this.x += 2;
+			  this.angle -= 0.03 * flip;
+		  }
+	  }
+   }
+   private updatePostion() {
+	  this.x -= Math.sin(this.angle) * this.speed;
+	  this.y -= Math.cos(this.angle) * this.speed;
+	  // this.y -= this.speed;
+   }
+   private clampSpeed() {
+	  this.speed = Math.max(-this.maxSpeed / 2, Math.min(this.speed, this.maxSpeed));
+   /*
+	  if(this.speed > this.maxSpeed)
+		  this.speed = this.maxSpeed;
+	  if(this.speed < -this.maxSpeed/2)         // car is moving in reverse.
+		  this.speed = -this.maxSpeed/2;
+	   */
+	}
+	private applyFriction() {
+	   if (this.speed !== 0) {
+           const frictionSign = Math.sign(this.speed);
+           this.speed -= frictionSign * this.friction;
+           if (Math.abs(this.speed) < this.friction) {
+               this.speed = 0;
+           }
        }
-	   if(this.controls.reverse) {
-		   // this.y += 2;
-		   this.speed -= this.acceleration;
-	   }
-
-	   if(this.speed > this.maxSpeed)
-		   this.speed = this.maxSpeed;
-	   if(this.speed < -this.maxSpeed/2)         // car is moving in reverse.
-		   this.speed = -this.maxSpeed/2;
-
+	   /*
 	   if(this.speed > 0) {
 		   this.speed -= this.friction;
 	   }
@@ -69,25 +106,8 @@ export class Car {
 	   if(Math.abs(this.speed) < this.friction) {
 		   this.speed = 0;
 	   }
-
-	   if(this.speed != 0) {
-		   const flip = this.speed > 0 ? 1 : -1;
-		   if(this.controls.left) {
-			   // this.x -= 2;
-			   this.angle += 0.03 * flip;
-		   }
-		   if(this.controls.right) {
-			   // this.x += 2;
-			   this.angle -= 0.03 * flip;
-		   }
-	   }
-
-	   this.x -= Math.sin(this.angle) * this.speed;
-	   this.y -= Math.cos(this.angle) * this.speed;
-	   // this.y -= this.speed;
-
-	   this.sensor.update();
-   }
+	   */
+	}
 
    draw(ctx: CanvasRenderingContext2D | null) {
 	  if(ctx) {
