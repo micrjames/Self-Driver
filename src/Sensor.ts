@@ -18,6 +18,10 @@ export class Sensor {
    }
 
    update() {
+	  this.castRays();
+   }
+
+   private castRays() {
 	  this.rays = [];
 	  for(let i = 0; i < this.rayCount; i++) {
 		 const rayAngle = lerp(

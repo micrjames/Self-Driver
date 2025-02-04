@@ -1,4 +1,4 @@
-import { lerp } from "./utils";
+import { lerp, Borders } from "./utils";
 
 export class Road {
    private x: number;
@@ -9,10 +9,7 @@ export class Road {
    private right: number;
    private top: number;
    private bottom: number;
-   private borders: [
-	  {x: number, y: number}[],
-	  {x: number, y: number}[]
-   ];
+   private borders: Borders;
 
    constructor(x: number, width: number, laneCount: number = 3) {
 	  this.x = x;
@@ -39,6 +36,10 @@ export class Road {
    getLaneCenter(laneIdx: number): number {
 	  const laneWidth = this.width/this.laneCount;
 	  return this.left+laneWidth/2+Math.min(laneIdx, this.laneCount-1)*laneWidth;
+   }
+
+   get _borders(): Borders { 
+	  return this.borders;
    }
 
    draw(ctx: CanvasRenderingContext2D | null) {

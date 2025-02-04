@@ -1,5 +1,6 @@
 import { Controls } from "./Controls";
 import { Sensor } from "./Sensor";
+import { Borders } from "./utils";
 
 export class Car {
    private x: number;
@@ -39,7 +40,12 @@ export class Car {
 	  return this.y;
    }
 
-   update() {
+   update(borders: Borders) { 
+	  this.move();
+	  console.log(borders);
+   }
+
+   private move() {
 	   if(this.controls.forward){
 		 // this.y -= 2;
 		 this.speed += this.acceleration;
