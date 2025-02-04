@@ -27,8 +27,15 @@ export function drawScene(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext
 
 
 export function drawSeg(ctx: CanvasRenderingContext2D, ray: Segment) {
-   ctx.beginPath();
-   ctx.moveTo(ray[0].x, ray[0].y);
-   ctx.lineTo(ray[1].x, ray[1].y);
-   ctx.stroke();
+   if (!Array.isArray(ray) || ray.length !== 2 ||
+	   typeof ray[0] === 'undefined' || typeof ray[1] === 'undefined' ||
+	   typeof ray[0].x !== 'number' || typeof ray[0].y !== 'number' ||
+	   typeof ray[1].x !== 'number' || typeof ray[1].y !== 'number') {
+	   console.error("Ray array or its elements are invalid or undefined.");
+   } else {
+	   ctx.beginPath();
+	   ctx.moveTo(ray[0].x, ray[0].y);
+	   ctx.lineTo(ray[1].x, ray[1].y);
+	   ctx.stroke();
+   }
 }

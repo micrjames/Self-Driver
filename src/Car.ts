@@ -48,7 +48,7 @@ export class Car {
 	  this.clampSpeed();
 	  this.applyFriction();
 
-	  this.sensor.update();
+	  this.sensor.update(borders);
 	  console.log(borders);
    }
 

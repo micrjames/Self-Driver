@@ -1,6 +1,7 @@
 import { Car } from "./Car";
-import { lerp } from "./utils";
+import { lerp, Point, LineSeg } from "./utils";
 import { drawSeg } from "./canvasHelpers";
+import { Borders, Segment, getIntersection } from "./utils";
 
 export class Sensor {
    private car: Car;
@@ -8,6 +9,10 @@ export class Sensor {
    private rayLength: number;
    private raySpread: number;
    private rays: Array<[ { x: number, y: number }, { x: number, y: number } ]>;
+   private readings: ({
+	  x: number, y: number, offset: number
+   } | null | undefined)[] ;
+   private lineSegs: LineSeg[];
    constructor(car: Car) {
 	  this.car = car;
 
@@ -16,10 +21,49 @@ export class Sensor {
 	  this.raySpread = Math.PI/4;
 
 	  this.rays = [];
+	  this.readings = [];
+
+	  this.lineSegs = [{
+			"color": "gray",
+			"segment": [] 
+		 },
+		 {
+			"color": "black",
+			"segment": [] 
+		 }
+	  ];
    }
 
-   update() {
+   update(roadBorders: Borders) {
 	  this.castRays();
+	  this.readings = [];
+	  for(let i = 0; i < this.rays.length; i++) {
+		 this.readings.push(
+			this.getReading(this.rays[i], roadBorders)
+		 );
+	  }
+   }
+
+   private getReading(ray: Segment, roadBorders: Borders): {
+	  x: number, y: number, offset: number
+   } | null | undefined {
+	  let touches = [];
+
+	  for(let i = 0; i < roadBorders.length; i++) {
+		 const touch = getIntersection(
+			ray[0],
+			ray[1],
+			roadBorders[i][0],
+			roadBorders[i][1]
+		 );
+		 if(touch) touches.push(touch);
+	  }
+	  if(touches.length == 0) return null;
+	  else {
+		 const offsets = touches.map(e=>e.offset);
+		 const minOffset = Math.min(...offsets);
+		 return touches.find(e=>e.offset=minOffset);
+	  }
    }
 
    private castRays() {
@@ -42,10 +86,21 @@ export class Sensor {
    }
 
    draw(ctx: CanvasRenderingContext2D) {
+	  let end: Point;
 	  for(let i = 0; i < this.rayCount; i++) {
+		 end = this.rays[i][1];
+		 if(this.readings[i])
+			end = { x: this.readings[i]?.x, y: this.readings[i]?.y };
+
 		 ctx.lineWidth = 2;
-		 ctx.strokeStyle = "yellow";
-		 drawSeg(ctx, this.rays[i]);
+		 this.lineSegs.forEach((lineSeg, idx) => {
+			this.lineSegs[idx].segment = [
+			   this.rays[i][idx],
+			   end
+			];
+			ctx.strokeStyle = `${lineSeg.color}`;
+			drawSeg(ctx, lineSeg.segment); 
+		 });
 	  }
    } 
 }
