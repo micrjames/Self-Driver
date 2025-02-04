@@ -1,5 +1,6 @@
 import { Car } from "./Car";
 import { Road } from "./Road";
+import { Segment } from "./utils";
 
 export function drawWithTransform(ctx: CanvasRenderingContext2D, x: number, y: number, angle: number | undefined, drawFunction: (ctx: CanvasRenderingContext2D) => void) {
     ctx.save();
@@ -22,4 +23,12 @@ export function drawScene(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext
         road.draw(ctx);
         car.draw(ctx);
     });
+}
+
+
+export function drawSeg(ctx: CanvasRenderingContext2D, ray: Segment) {
+   ctx.beginPath();
+   ctx.moveTo(ray[0].x, ray[0].y);
+   ctx.lineTo(ray[1].x, ray[1].y);
+   ctx.stroke();
 }

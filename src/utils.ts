@@ -5,7 +5,11 @@ export interface KeyMappings {
 export const lerp = (A: number, B: number, t: number): number => A+(B-A)*t;
 
 
+export type Point = {
+   x: number, y: number
+}
+export type Segment = Point[];
 export type Borders = [
-   {x: number, y: number}[],
-   {x: number, y: number}[]
+   Segment,
+   Segment
 ];

@@ -1,5 +1,6 @@
 import { Car } from "./Car";
 import { lerp } from "./utils";
+import { drawSeg } from "./canvasHelpers";
 
 export class Sensor {
    private car: Car;
@@ -42,12 +43,9 @@ export class Sensor {
 
    draw(ctx: CanvasRenderingContext2D) {
 	  for(let i = 0; i < this.rayCount; i++) {
-		 ctx.beginPath();
 		 ctx.lineWidth = 2;
 		 ctx.strokeStyle = "yellow";
-		 ctx.moveTo(this.rays[i][0].x, this.rays[i][0].y);
-		 ctx.lineTo(this.rays[i][1].x, this.rays[i][1].y);
-		 ctx.stroke();
+		 drawSeg(ctx, this.rays[i]);
 	  }
    } 
 }

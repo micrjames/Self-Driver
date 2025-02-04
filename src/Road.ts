@@ -1,4 +1,5 @@
 import { lerp, Borders } from "./utils";
+import { drawSeg } from "./canvasHelpers";
 
 export class Road {
    private x: number;
@@ -57,18 +58,30 @@ export class Road {
 			   ctx.setLineDash([20, 20]);
 			else
 			   ctx.setLineDash([]);
+			/*
 			ctx.beginPath();
 			ctx.moveTo(x, this.top);
 			ctx.lineTo(x, this.bottom);
 			ctx.stroke();
+		    */
+			drawSeg(ctx, [
+			   {x, y: this.top},
+			   {x, y: this.bottom}
+			]);
 		 }
 
 		 ctx.setLineDash([]);
 		 this.borders.forEach(border => {
+			/*
 			ctx.beginPath();
 			ctx.moveTo(border[0].x, border[0].y);
 			ctx.moveTo(border[1].x, border[1].y);
 			ctx.stroke();
+		    */
+			drawSeg(ctx, [
+			   {x: border[0].x, y: border[0].y},
+			   {x: border[1].x, y: border[1].y}
+			]);
 		 });
 	  }
    }
