@@ -60,26 +60,25 @@ export class Car {
    private createPolygon(): Point[] {
 	  const rad = Math.hypot(this.width, this.height)/2;
 	  const alpha = Math.atan2(this.width, this.height);
-	  const points = [
-		 {
-			x: this.x - Math.sin(this.angle - alpha) * rad,
-			y: this.y - Math.cos(this.angle - alpha) * rad
-		 },
-		 {
-			x: this.x - Math.sin(this.angle + alpha) * rad,
-			y: this.y - Math.cos(this.angle + alpha) * rad
-		 },
-		 {
-			x: this.x - Math.sin(Math.PI+this.angle - alpha) * rad,
-			y: this.y - Math.cos(Math.PI+this.angle - alpha) * rad
-		 },
-		 {
-			x: this.x - Math.sin(Math.PI+this.angle + alpha) * rad,
-			y: this.y - Math.cos(Math.PI+this.angle + alpha) * rad
-		 }
-	  ];
 
+	  const points = this.createPolyPoints(rad, alpha);
 	  return points;
+   }
+
+   private createPolyPoints(rad: number, alpha: number): Point[] {
+	  return [
+		 this.createPolyPoint(this.angle-alpha, rad),
+		 this.createPolyPoint(this.angle+alpha, rad),
+		 this.createPolyPoint(Math.PI+this.angle-alpha, rad),
+		 this.createPolyPoint(Math.PI+this.angle+alpha, rad)
+	  ];
+   }
+
+   private createPolyPoint(angle: number, rad: number): Point {
+		 return {
+			x: this.x - Math.sin(angle) * rad,
+			y: this.y - Math.cos(angle) * rad
+		 };
    }
 
    private accelerate() {
