@@ -1,6 +1,6 @@
 import { Controls } from "./Controls";
 import { Sensor } from "./Sensor";
-import { Borders } from "./utils";
+import { Point, Borders } from "./utils";
 import { drawWithTransform } from "./canvasHelpers";
 
 export class Car {
@@ -14,6 +14,8 @@ export class Car {
    private maxSpeed: number;
    private friction: number;
    private angle: number;
+
+   private polygon: Point[];
 
    private sensor: Sensor;
    private controls: Controls;
@@ -29,6 +31,8 @@ export class Car {
 	  this.maxSpeed = 3;
 	  this.friction = 0.05;
 	  this.angle = 0;
+
+	  this.polygon = [];
 
 	  this.sensor = new Sensor(this);
 	  this.controls = new Controls();
@@ -48,8 +52,34 @@ export class Car {
 	  this.clampSpeed();
 	  this.applyFriction();
 
+	  this.polygon = this.createPolygon();
+
 	  this.sensor.update(borders);
-	  console.log(borders);
+   }
+
+   private createPolygon(): Point[] {
+	  const rad = Math.hypot(this.width, this.height)/2;
+	  const alpha = Math.atan2(this.width, this.height);
+	  const points = [
+		 {
+			x: this.x - Math.sin(this.angle - alpha) * rad,
+			y: this.y - Math.cos(this.angle - alpha) * rad
+		 },
+		 {
+			x: this.x - Math.sin(this.angle + alpha) * rad,
+			y: this.y - Math.cos(this.angle + alpha) * rad
+		 },
+		 {
+			x: this.x - Math.sin(Math.PI+this.angle - alpha) * rad,
+			y: this.y - Math.cos(Math.PI+this.angle - alpha) * rad
+		 },
+		 {
+			x: this.x - Math.sin(Math.PI+this.angle + alpha) * rad,
+			y: this.y - Math.cos(Math.PI+this.angle + alpha) * rad
+		 }
+	  ];
+
+	  return points;
    }
 
    private accelerate() {
@@ -112,15 +142,25 @@ export class Car {
 
    draw(ctx: CanvasRenderingContext2D | null) {
 	  if(ctx) {
-		 drawWithTransform(ctx, this.x, this.y, -this.angle, ctx => {
-			ctx.beginPath();
-			ctx.rect(-this.width/2, // this.x-this.width/2,
+		 ctx.beginPath();
+					 
+		 ctx.moveTo(<number>this.polygon[0].x, <number>this.polygon[0].y);
+		 for(let i = 0; i < this.polygon.length; i++)
+		 	ctx.lineTo(<number>this.polygon[i].x, <number>this.polygon[i].y);
+					
+				
+	     ctx.fill();
+		 /*
+		  drawWithTransform(ctx, this.x, this.y, -this.angle, ctx => {
+			  ctx.beginPath();
+			  ctx.rect(-this.width/2, // this.x-this.width/2,
 					 -this.height/2, // this.y-this.height/2,
 					 this.width,
 					 this.height
 					);
-			ctx.fill();
+			  ctx.fill();
 		 });
+		 */
 		 this.sensor.draw(ctx);
 	  }
    }
