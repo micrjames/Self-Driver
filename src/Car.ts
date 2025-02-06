@@ -1,6 +1,6 @@
 import { Controls } from "./Controls";
 import { Sensor } from "./Sensor";
-import { Point, Borders } from "./utils";
+import { Point, Borders, polysIntersect } from "./utils";
 import { drawWithTransform } from "./canvasHelpers";
 
 export class Car {
@@ -17,6 +17,7 @@ export class Car {
 
    private polygon: Point[];
 
+   private damaged: boolean;
    private sensor: Sensor;
    private controls: Controls;
 
@@ -34,6 +35,7 @@ export class Car {
 
 	  this.polygon = [];
 
+	  this.damaged = false;
 	  this.sensor = new Sensor(this);
 	  this.controls = new Controls();
    }
@@ -46,15 +48,25 @@ export class Car {
    }
 
    update(borders: Borders) { 
-	  this.accelerate();
-	  this.steer();
-	  this.updatePostion();
-	  this.clampSpeed();
-	  this.applyFriction();
+	  if(!this.damaged) {
+		 this.accelerate();
+		 this.steer();
+		 this.updatePostion();
+		 this.clampSpeed();
+		 this.applyFriction();
+		 this.damaged = this.assessDamage(borders);
+	  }
 
 	  this.polygon = this.createPolygon();
 
 	  this.sensor.update(borders);
+   }
+
+   private assessDamage(borders: Borders): boolean {
+	  for(let i = 0; i < borders.length; i++)
+	  	if(polysIntersect(this.polygon, borders[i]))
+		   return true;
+	  return false;
    }
 
    private createPolygon(): Point[] {
@@ -75,10 +87,10 @@ export class Car {
    }
 
    private createPolyPoint(angle: number, rad: number): Point {
-		 return {
-			x: this.x - Math.sin(angle) * rad,
-			y: this.y - Math.cos(angle) * rad
-		 };
+	  return {
+		 x: this.x - Math.sin(angle) * rad,
+		 y: this.y - Math.cos(angle) * rad
+	  };
    }
 
    private accelerate() {
@@ -141,6 +153,10 @@ export class Car {
 
    draw(ctx: CanvasRenderingContext2D | null) {
 	  if(ctx) {
+		 if(this.damaged)
+			ctx.fillStyle = "gray";
+		 else
+			ctx.fillStyle = "black";
 		 ctx.beginPath();
 					 
 		 ctx.moveTo(<number>this.polygon[0].x, <number>this.polygon[0].y);
